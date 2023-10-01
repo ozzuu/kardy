@@ -21,6 +21,7 @@ proc addCardForm(settings: Settings; state: State): VNode =
       text "Add Card"
       proc onClick(ev: Event; n: VNode) =
         state.deck.add selected
+        saveState state
 
 proc drawMain*(settings: Settings; state: State): VNode =
   buildHtml tdiv(class = "main"):
@@ -42,6 +43,7 @@ proc drawMain*(settings: Settings; state: State): VNode =
             text "Delete"
             proc onClick(ev: Event; n: VNode) =
               state.deck.delete n.index
+              saveState state
 
     hr()
 

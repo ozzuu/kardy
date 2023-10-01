@@ -24,7 +24,9 @@ proc getSettings*(default: Settings): Settings =
     result = getHash().decodeSettings
   except:
     result = default
-    
+
+proc saveState*(s: State) =
+  window.localStorage.setItem(localStorageStateKey, $s.toJson)
 proc getState*(default: State): State =
   try:
     result = window.localStorage.getItem(localStorageStateKey).`$`.parseJson.to State
