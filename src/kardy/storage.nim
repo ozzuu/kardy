@@ -4,6 +4,7 @@ from std/json import `$`, parseJson, to
 from std/jsonutils import toJson
 
 import kardy/types
+import kardy/config
 
 proc setHash*(s: string) =
   window.location.hash = cstring s
@@ -21,5 +22,11 @@ proc saveSettings*(s: Settings) =
 proc getSettings*(default: Settings): Settings =
   try:
     result = getHash().decodeSettings
+  except:
+    result = default
+    
+proc getState*(default: State): State =
+  try:
+    result = window.localStorage.getItem(localStorageStateKey).`$`.parseJson.to State
   except:
     result = default

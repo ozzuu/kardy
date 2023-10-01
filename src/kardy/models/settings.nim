@@ -16,7 +16,7 @@ proc drawSettings*(settings: Settings): VNode =
     settings.cards.add card
   while settings.cards.len < minCards:
     addCard()
-  result = buildHtml(tdiv(class = "settings")):
+  result = buildHtml tdiv(class = "settings"):
     h1: text "Kardy Settings"
     tdiv(class = "cards"):
       tdiv(class="operations"):

@@ -8,7 +8,7 @@ import kardy/models/main as mainPage
 
 var
   settings = new Settings
-  state: State
+  state = new State
 
 proc renderer: VNode =
   var hash = getHash()
@@ -17,9 +17,11 @@ proc renderer: VNode =
     hash = settingsRoute
     setHash hash
 
-  echo settings[]
+  state = getState state
 
-  buildHtml(tdiv):
+  echo state[]
+
+  buildHtml tdiv:
     case hash:
       of settingsRoute:
         drawSettings settings

@@ -27,3 +27,8 @@ type
 
 converter cardIdToInt*(id: CardId): int =
   int id
+func get*(cards: seq[CardSetting]; cardId: CardId): CardSetting =
+  new result
+  for card in cards:
+    if cardId == card.id:
+      return card
