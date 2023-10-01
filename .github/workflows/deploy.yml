@@ -9,13 +9,14 @@ env:
   deploy-dir: .gh-pages
 
 jobs:
-  docs:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.nim-version }}
+      - run: npm install -g uglifyjs
       - run: nimble install -Y
       - run: nimble build_release
       - name: "Copy public dir"
@@ -28,3 +29,4 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           publish_dir: ${{ env.deploy-dir }}
+          cname: kardy.ozzuu.com
