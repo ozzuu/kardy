@@ -26,7 +26,7 @@ task finalize, "Uglify and add header":
   let
     f = binDir / bin[0] & "." & backend
     outF = binDir / bin[0] & ".min." & backend
-  exec fmt"uglifyjs -o {outF} {f}"
+  exec findExe("uglifyjs") & fmt" -o {outF} {f}"
   rmFile f
 
 task buildRelease, "Build release version":
