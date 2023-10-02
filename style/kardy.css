@@ -35,31 +35,43 @@ body {
   margin: 0.5em 0;
   padding: 0.3em;
 }
-#ROOT .main .deck {
+#ROOT .main .cards {
   margin: 1em;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
-#ROOT .main .deck .card {
+#ROOT .main .deck .title, #ROOT .main .gameCards .title {
+  font-size: 2em;
+}
+#ROOT .main .card {
   overflow: hidden;
 }
-#ROOT .main .deck .card:hover .probabilities {
+#ROOT .main .card:hover .probabilities {
   transform: translateX(0%);
 }
-#ROOT .main .deck .card .name {
+#ROOT .main .card .name {
   font-size: 1.5em;
 }
-#ROOT .main .deck .card .description {
+#ROOT .main .card .description {
   margin: 1em;
 }
-#ROOT .main .deck .card .probabilities {
+#ROOT .main .card .totalProbability {
+  background: rgba(0, 0, 0, 0.062745098);
+  border-radius: 1em;
+  width: fit-content;
+  padding: 0.5em;
+}
+#ROOT .main .card .totalProbability .title {
+  font-size: 1.1em;
+}
+#ROOT .main .card .probabilities {
   transition: 0.5s;
   transform: translateX(101%);
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   position: absolute;
   top: 0;
   left: 0;
@@ -67,13 +79,10 @@ body {
   width: 100%;
   height: 100%;
 }
-#ROOT .main .deck .card .probabilities .title {
-  font-size: 1.4em;
-}
-#ROOT .main .deck .card .probabilities .parts .title {
+#ROOT .main .card .probabilities .title {
   font-size: 1.1em;
 }
-#ROOT .main .deck .card .probabilities .parts .probability {
+#ROOT .main .card .probabilities .probability {
   font-size: 0.8em;
 }
 #ROOT .settings {
@@ -100,6 +109,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   border: 0.3em solid black;
   border-radius: 1em;
   margin: 1em;
@@ -111,5 +121,5 @@ body {
 }
 .card button {
   position: absolute;
-  bottom: 0.5em;
+  bottom: 0.2em;
 }
