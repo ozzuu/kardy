@@ -22,6 +22,8 @@ requires "util"
 from std/strformat import fmt
 from std/os import `/`
 
+const styleDir = "public/style"
+
 task finalize, "Uglify and add header":
   let
     f = binDir / bin[0] & "." & backend
@@ -29,8 +31,12 @@ task finalize, "Uglify and add header":
   exec findExe("uglifyjs") & fmt" -o {outF} {f}"
   rmFile f
 
+task buildCss, "Builds Sass and add it to `build/`":
+  exec fmt"sass --no-source-map {styleDir / bin[0]}.sass {styleDir / bin[0]}.css"
+
 task buildRelease, "Build release version":
   exec "nimble -d:danger build"
 
 after build:
   finalizeTask()
+  buildCssTask()

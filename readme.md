@@ -52,10 +52,20 @@ You can configure:
 
 Your current game state is saved at LocalStorage!
 
+## Dependencies
+
+```bash
+npm install -g uglify-js sass
+```
+
 ## Contribute!
 
 You can suggest a feature that can be helpful to a game in issues tab or create
 an pull request!
+
+## TODO
+
+- [ ] Remove `CardState` object, it's not necessary
 
 ## License
 

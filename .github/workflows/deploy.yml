@@ -16,7 +16,7 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.nim-version }}
-      - run: npm install -g uglify-js
+      - run: npm install -g uglify-js sass
       - run: nimble update
       - run: bash -c "nimble build_release"
       - run: mkdir ${{ env.deploy-dir }}

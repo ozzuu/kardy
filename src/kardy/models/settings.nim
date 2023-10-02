@@ -32,12 +32,13 @@ proc drawSettings*(settings: Settings): VNode =
           let card = settings.cards[i]
           tdiv(class = "card"):
             span(class = "id"):
-              text $card.id
+              text "Card ID: "
+              bold: text $card.id
             input(placeholder = "Card Name", class = "name", minlength = "1",
                   value = card.name, index = i):
               proc onInput(ev: Event; n: VNode) =
                 settings.cards[n.index].name = $n.value
-            input(placeholder = "Card Description", class = "description", minlength = "1",
+            textarea(placeholder = "Card Description", class = "description", minlength = "1",
                   value = card.description, index = i):
               proc onInput(ev: Event; n: VNode) =
                 settings.cards[n.index].description = $n.value

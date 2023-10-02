@@ -108,13 +108,16 @@ proc drawMain*(settings: Settings; state: State): VNode =
           p(class = "description"):
             text card.description
           tdiv(class = "probabilities"):
-            for probability in cardState.probabilities:
-              tdiv(class = "probability"):
-                text $probability
+            tdiv(class = "title"): text "Probabilities"
             if cardState.probabilities.len > 0:
+              tdiv(class = "parts"):
+                tdiv(class = "title"): text "Parts"
+                for probability in cardState.probabilities:
+                  tdiv(class = "probability"):
+                    text $probability
               tdiv(class = "total"):
-                bold:
-                  text $cardState.probabilities.summary
+                tdiv(class = "title"): text "Total"
+                bold: text $cardState.probabilities.summary
           button(class = "delete", index = i):
             text "Delete"
             proc onClick(ev: Event; n: VNode) =
