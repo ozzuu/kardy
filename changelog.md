@@ -11,6 +11,7 @@
 - Fixed delete button z-index in card
 - Added all game cards representation
 - Removed `CardState` object
+- Fixed settings card styling
 
 ## Version 0.1.0 (2023/10/01)
 
