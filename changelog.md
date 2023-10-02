@@ -8,6 +8,7 @@
 - Added deck limit check for cards
 - Added probabilities
 - Added styling
+- Fixed delete button z-index in card
 
 ## Version 0.1.0 (2023/10/01)
 
