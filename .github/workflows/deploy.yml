@@ -17,10 +17,10 @@ jobs:
         with:
           nim-version: ${{ env.nim-version }}
       - run: npm install -g uglify-js
-      - run: nimble install -Y
-      - run: nimble build_release
-      - name: "Copy public dir"
-        run: cp -r ${{ env.deploy-dir }}/public/* ${{ env.deploy-dir }}
+      - run: nimble update
+      - run: bash -c "nimble build_release"
+      - run: mkdir ${{ env.deploy-dir }}
+      - run: cp -r public/* ${{ env.deploy-dir }}
 
       - name: deploy on github pages
         uses: peaceiris/actions-gh-pages@v3
