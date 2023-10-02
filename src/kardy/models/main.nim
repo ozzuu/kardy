@@ -129,7 +129,7 @@ proc drawMain*(settings: Settings; state: State): VNode =
       tdiv(class = "cards"):
         for i in 0..<settings.cards.len:
           let card = settings.cards[i]
-          if card.disposable and not card.discarded state:
+          if not card.discarded state:
             let probabilities = card.probabilities state
             tdiv(class = "card"):
               span(class = "name"):

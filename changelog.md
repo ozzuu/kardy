@@ -12,6 +12,7 @@
 - Added all game cards representation
 - Removed `CardState` object
 - Fixed settings card styling
+- Showing non disposable cards at main page card listing
 
 ## Version 0.1.0 (2023/10/01)
 
