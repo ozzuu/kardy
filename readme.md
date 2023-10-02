@@ -63,10 +63,6 @@ npm install -g uglify-js sass
 You can suggest a feature that can be helpful to a game in issues tab or create
 an pull request!
 
-## TODO
-
-- [ ] Remove `CardState` object, it's not necessary
-
 ## License
 
 This application is libre licensed over GPL-3
