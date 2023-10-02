@@ -9,6 +9,8 @@
 - Added probabilities
 - Added styling
 - Fixed delete button z-index in card
+- Added all game cards representation
+- Removed `CardState` object
 
 ## Version 0.1.0 (2023/10/01)
 

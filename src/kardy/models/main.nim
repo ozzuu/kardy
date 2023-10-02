@@ -86,7 +86,6 @@ proc addActionForm(settings: Settings; state: State): VNode =
             saveState state
 
 proc drawMain*(settings: Settings; state: State): VNode =
-  var cardsState = calculateCardsState(settings, state)
   buildHtml tdiv(class = "main"):
     h1: text "Kardy"
 
@@ -96,33 +95,57 @@ proc drawMain*(settings: Settings; state: State): VNode =
       addActionForm settings, state
 
     tdiv(class = "deck"):
-      for i in 0..<state.deck.len:
-        let
-          cardId = state.deck[i]
-          card = settings.cards.get cardId
-          cardState = cardsState.get cardId
+      tdiv(class = "title"): text "Deck"
+      tdiv(class = "cards"):
+        for i in 0..<state.deck.len:
+          let
+            cardId = state.deck[i]
+            card = settings.cards.get cardId
+            probabilities = card.probabilities state
 
-        tdiv(class = "card"):
-          span(class = "name"):
-            text card.name
-          p(class = "description"):
-            text card.description
-          tdiv(class = "probabilities"):
-            tdiv(class = "title"): text "Probabilities"
-            if cardState.probabilities.len > 0:
-              tdiv(class = "parts"):
-                tdiv(class = "title"): text "Parts"
-                for probability in cardState.probabilities:
+          tdiv(class = "card"):
+            span(class = "name"):
+              text card.name
+            p(class = "description"):
+              text card.description
+            tdiv(class = "probabilities"):
+              tdiv(class = "title"): text "Probabilities"
+              if probabilities.len > 0:
+                for probability in probabilities:
                   tdiv(class = "probability"):
                     text $probability
-              tdiv(class = "total"):
-                tdiv(class = "title"): text "Total"
-                bold: text $cardState.probabilities.summary
-          button(class = "delete", index = i):
-            text "Delete"
-            proc onClick(ev: Event; n: VNode) =
-              state.deck.delete n.index
-              saveState state
+            tdiv(class = "totalProbability"):
+              if probabilities.len > 0:
+                tdiv(class = "title"): text "Probability"
+                bold: text $probabilities.summary
+            button(class = "delete", index = i):
+              text "Delete"
+              proc onClick(ev: Event; n: VNode) =
+                state.deck.delete n.index
+                saveState state
+
+    tdiv(class = "gameCards"):
+      tdiv(class = "title"): text "Game cards"
+      tdiv(class = "cards"):
+        for i in 0..<settings.cards.len:
+          let card = settings.cards[i]
+          if card.disposable and not card.discarded state:
+            let probabilities = card.probabilities state
+            tdiv(class = "card"):
+              span(class = "name"):
+                text card.name
+              p(class = "description"):
+                text card.description
+              tdiv(class = "probabilities"):
+                tdiv(class = "title"): text "Probabilities"
+                if probabilities.len > 0:
+                  for probability in probabilities:
+                    tdiv(class = "probability"):
+                      text $probability
+              tdiv(class = "totalProbability"):
+                if probabilities.len > 0:
+                  tdiv(class = "title"): text "Probability"
+                  bold: text $probabilities.summary
 
     hr()
 
