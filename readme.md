@@ -11,7 +11,7 @@
 This serverless application helps you in card based games.
 
 This application is intended to be helpful in various card games, but for now,
-the main focus is implement for the game Cluedo and related card guessing games.
+the main focus is implement for the game Clue/Cluedo and related card guessing games.
 
 ## Features
 

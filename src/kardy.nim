@@ -1,7 +1,7 @@
 include pkg/karax/prelude
 
 import kardy/config
-import kardy/types
+import kardy/base
 import kardy/storage
 import kardy/models/settings as settingsPage
 import kardy/models/main as mainPage

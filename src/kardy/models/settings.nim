@@ -1,6 +1,8 @@
+from std/dom import checked
+
 include pkg/karax/prelude
 
-import kardy/types
+import kardy/base
 import kardy/storage
 
 from pkg/util/forStr import tryParseInt
@@ -34,13 +36,22 @@ proc drawSettings*(settings: Settings): VNode =
             input(placeholder = "Card Name", class = "name", minlength = "1",
                   value = card.name, index = i):
               proc onInput(ev: Event; n: VNode) =
-                let card = settings.cards[n.index]
-                card.name = $n.value
+                settings.cards[n.index].name = $n.value
+            input(placeholder = "Card Description", class = "description", minlength = "1",
+                  value = card.description, index = i):
+              proc onInput(ev: Event; n: VNode) =
+                settings.cards[n.index].description = $n.value
             input(placeholder = "Card quantity", class = "name", `type` = "number",
                   min = "1", value = $card.quantity, index = i):
               proc onInput(ev: Event; n: VNode) =
-                let card = settings.cards[n.index]
-                card.quantity = tryParseInt($n.value, 1)
+                settings.cards[n.index].quantity = tryParseInt($n.value, 1)
+            label(class = "disposable"):
+              input(`type` = "checkbox", checked = toChecked(card.disposable),
+                    index = i):
+                proc onChange(ev: Event; n: VNode) =
+                  let card = settings.cards[n.index]
+                  card.disposable = not card.disposable
+              text "Disposable"
             button(class = "delete", tabindex = "-1", index = i):
               text "Delete card"
               proc onClick(ev: Event; n: VNode) =

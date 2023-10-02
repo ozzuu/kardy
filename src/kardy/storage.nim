@@ -1,9 +1,9 @@
 from std/dom import window, getItem, setItem
 from std/base64 import encode, decode
-from std/json import `$`, parseJson, to
-from std/jsonutils import toJson
+from std/json import `$`, parseJson, to, pretty
+from std/jsonutils import toJson, fromJson, jsonTo
 
-import kardy/types
+import kardy/base
 import kardy/config
 
 proc setHash*(s: string) =
@@ -29,6 +29,7 @@ proc saveState*(s: State) =
   window.localStorage.setItem(localStorageStateKey, $s.toJson)
 proc getState*(default: State): State =
   try:
-    result = window.localStorage.getItem(localStorageStateKey).`$`.parseJson.to State
+    result.fromJson window.localStorage.getItem(localStorageStateKey).`$`.parseJson
   except:
+    echo getCurrentExceptionMsg()
     result = default
