@@ -100,6 +100,7 @@ body {
   margin: 0.2em;
   font-size: 0.9em;
   resize: vertical;
+  max-width: 100%;
 }
 #ROOT .settings .cards .cardList .card label {
   margin: 0.5em 0;
