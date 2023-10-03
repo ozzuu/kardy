@@ -21,6 +21,9 @@ body {
   min-height: 100%;
   margin: 5em;
 }
+#ROOT .main .menu .undo {
+  max-width: 15vw;
+}
 #ROOT .main .menu, #ROOT .main .actions, #ROOT .main .newAction {
   display: flex;
   flex-direction: row;
