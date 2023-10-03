@@ -14,9 +14,4 @@ proc newCardSelect*(value: var CardId; cards: seq[CardSetting]; title = "Select 
       option(value = $card.id):
         text card.name
     proc onChange(ev: Event; n: VNode) =
-      echo "Changed"
-      echo n.value
-      echo ev.target.value
-      echo value
-      echo "----"
       value = CardId tryParseInt $n.value
