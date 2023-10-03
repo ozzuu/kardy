@@ -28,7 +28,7 @@ body
       flex-direction: row
       flex-wrap: wrap
       justify-content: center
-      .addCard, .newAction .discard, .newAction .probability
+      .addCard, .newAction .discard, .newAction .bet
         margin: 1em
         padding: 1em
         display: flex
@@ -50,7 +50,7 @@ body
       overflow: hidden
 
       &:hover
-        .probabilities
+        .bets
           transform: translateX(0%)
 
       .name
@@ -58,7 +58,7 @@ body
       .description
         margin: 1em
 
-      .totalProbability
+      .probability
         background: #00000010
         border-radius: 1em
         width: fit-content
@@ -66,7 +66,7 @@ body
         .title
           font-size: 1.1em
 
-      .probabilities
+      .bets
         transition: .5s
         transform: translateX(101%)
         display: flex

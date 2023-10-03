@@ -66,6 +66,7 @@ an pull request!
 
 - [ ] Add categories to cards
   - [ ] Card selection separated by categories with `<optgroup>` HTML element
+- [ ] Suggestion of already informed players at new bet player field
 
 ## License
 

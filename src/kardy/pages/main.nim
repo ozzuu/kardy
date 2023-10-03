@@ -1,5 +1,6 @@
 from std/dom import value, reload, window
 from std/sugar import collect
+from std/strformat import fmt
 
 include pkg/karax/prelude
 
@@ -8,7 +9,7 @@ import kardy/config
 import kardy/storage
 import kardy/widgets
 
-from pkg/util/forStr import tryParseFloat
+from pkg/util/forStr import tryParseFloat, tryParseInt
 
 proc addCardForm(settings: Settings; state: State): VNode =
   var selectedCard {.global.} = CardId -1
@@ -32,18 +33,20 @@ proc addCardForm(settings: Settings; state: State): VNode =
             saveState state
 
 proc addActionForm(settings: Settings; state: State): VNode =
-  var probability: Probability
-  let cards {.global.} = collect:
-    for card in settings.cards:
-      if card.disposable and not card.discarded state:
-        card
+  var
+    betPlayer: int
+    betTrustability: Percentage
   var
     discardCard {.global.} = CardId -1
-    addProbabilityCard {.global.} = CardId -1
+    addBetCard {.global.} = CardId -1
   buildHtml tdiv(class = "newAction"):
     tdiv(class = "discard"):
       text "Discard Card"
-      discardCard.newCardSelect cards
+      discardCard.newCardSelect  collect(
+        for card in settings.cards:
+          if card.disposable and not card.discarded state:
+            card
+      )
       button:
         text "Discard"
         proc onClick(ev: Event; n: VNode) =
@@ -51,20 +54,33 @@ proc addActionForm(settings: Settings; state: State): VNode =
           if cardId >= 0:
             state.addAction cardId.newAction Discard
             saveState state
-    tdiv(class = "probability"):
-      text "Add a new probability to card"
-      addProbabilityCard.newCardSelect cards
-      input(`type` = "number", step = "0.1", max = $high Probability,
-            min = $low Probability, value = "0"):
+    tdiv(class = "bet"):
+      text "Add a new user bet"
+      addBetCard.newCardSelect collect(
+        for card in settings.cards:
+          if card.disposable and not card.discarded state:
+            card
+      )
+      input(placeholder = "Player ID", `type` = "number", min = "1",
+            max = $settings.players):
         proc onInput(ev: Event; n: VNode) =
-          probability = tryParseFloat $n.value
+          echo n.value
+          echo tryParseInt $n.value
+          betPlayer = tryParseInt $n.value
+      input(placeholder = "Trust Level", `type` = "number", step = "0.1",
+            max = $high Percentage, min = $low Percentage, value = "1"):
+        proc onInput(ev: Event; n: VNode) =
+          betTrustability = tryParseFloat $n.value
       button:
         text "Add"
         proc onClick(ev: Event; n: VNode) =
-          let cardId = addProbabilityCard
-          echo cardId
+          let cardId = addBetCard
           if cardId >= 0:
-            state.addAction cardId.newAction(NewProbability, probability)
+            state.addAction cardId.newAction(
+              NewBet,
+              playerId = PlayerId betPlayer,
+              trustability = betTrustability
+            )
             saveState state
 
 proc undoForm(settings: Settings; state: State): VNode =
@@ -74,16 +90,13 @@ proc undoForm(settings: Settings; state: State): VNode =
         text "Last action:"
         p:
           bold:
-            text $state.actions[^1].kind
-            text " for card "
-            text settings.cards.get(state.actions[^1].cardId).name
+            text state.actions[^1].pretty settings
 
       button:
         text "Undo"
         proc onClick(ev: Event; n: VNode) =
           discard pop state.actions
           saveState state
-
 
 
 proc drawMain*(settings: Settings; state: State): VNode =
@@ -97,30 +110,32 @@ proc drawMain*(settings: Settings; state: State): VNode =
         undoForm settings, state
 
     tdiv(class = "deck"):
-      tdiv(class = "title"): text "Deck"
+      tdiv(class = "title"):
+        text "Deck\t"
+        sup: text fmt"{state.deck.len} cards"
       tdiv(class = "cards"):
         for i in 0..<state.deck.len:
           let
             cardId = state.deck[i]
             card = settings.cards.get cardId
           if not card.discarded state:
-            let probabilities = card.probabilities state
+            let bets = card.bets state
 
             tdiv(class = "card"):
               span(class = "name"):
                 text card.name
               p(class = "description"):
                 text card.description
-              tdiv(class = "probabilities"):
-                tdiv(class = "title"): text "Probabilities"
-                if probabilities.len > 0:
-                  for probability in probabilities:
-                    tdiv(class = "probability"):
-                      text $probability
-              tdiv(class = "totalProbability"):
-                if probabilities.len > 0:
+              tdiv(class = "bets"):
+                tdiv(class = "title"): text "Bets"
+                if bets.len > 0:
+                  for bet in bets:
+                    tdiv(class = "bet"):
+                      text $bet
+              tdiv(class = "probability"):
+                if bets.len > 0:
                   tdiv(class = "title"): text "Probability"
-                  bold: text $probabilities.summary
+                  bold: text $bets.summary settings
               button(class = "delete", index = i):
                 text "Delete"
                 proc onClick(ev: Event; n: VNode) =
@@ -128,32 +143,42 @@ proc drawMain*(settings: Settings; state: State): VNode =
                   saveState state
 
     tdiv(class = "gameCards"):
-      tdiv(class = "title"): text "Game cards"
+      tdiv(class = "title"):
+        text "Game cards\t"
+        sup: text fmt"{settings.cards.len - state.deck.len} cards"
       tdiv(class = "cards"):
         for i in 0..<settings.cards.len:
           let card = settings.cards[i]
-          if not card.discarded state:
-            let probabilities = card.probabilities state
-            tdiv(class = "card"):
-              span(class = "name"):
-                text card.name
-              p(class = "description"):
-                text card.description
-              tdiv(class = "probabilities"):
-                tdiv(class = "title"): text "Probabilities"
-                if probabilities.len > 0:
-                  for probability in probabilities:
-                    tdiv(class = "probability"):
-                      text $probability
-              tdiv(class = "totalProbability"):
-                if probabilities.len > 0:
-                  tdiv(class = "title"): text "Probability"
-                  bold: text $probabilities.summary
+          if card.id notin state.deck:
+            if not card.discarded state:
+              let bets = card.bets state
+              tdiv(class = "card"):
+                span(class = "name"):
+                  text card.name
+                p(class = "description"):
+                  text card.description
+                tdiv(class = "bets"):
+                  tdiv(class = "title"): text "Bets"
+                  if bets.len > 0:
+                    for bet in bets:
+                      tdiv(class = "bet"):
+                        text $bet
+                tdiv(class = "probability"):
+                  if bets.len > 0:
+                    tdiv(class = "title"): text "probability"
+                    bold: text $bets.summary settings
+
+    hr()
+    h1: text "Action History"
+    ul:
+      for action in state.actions:
+        li: text action.pretty settings
 
     hr()
 
     a(href = "#" & settingsRoute):
-      text "Cards settings"
+      text "Settings"
+    br()
     button(class = "resetState"):
       text "Reset state"
       proc onClick(ev: Event; n: VNode) =

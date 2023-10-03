@@ -57,6 +57,12 @@ proc drawSettings*(settings: Settings): VNode =
               text "Delete card"
               proc onClick(ev: Event; n: VNode) =
                 settings.cards.delete n.index
+      tdiv(class = "players"):
+        input(placeholder = "Player quantity (without you)", `type` = "number",
+              min = "1", value = $settings.players):
+          proc onInput(ev: Event; n: VNode) =
+            settings.players = tryParseInt($n.value, 1)
+
       button(class = "done"):
         text "Done"
         proc onClick(ev: Event; n: VNode) =

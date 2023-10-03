@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.5.0 (2023/10/03)
+
+- Fixed tools option update
+- Added card count
+- Removed your deck cards from game card list
+- Replaced NewProbability action to NewBet
+- Added player id for bets
+- Smart summary
+
 ## Version 0.4.0 (2023/10/03)
 
 - Deleted `unselect` proc for `<select>` elements
