@@ -62,6 +62,10 @@ npm install -g uglify-js sass
 
 You can suggest a feature that can be helpful to a game in issues tab or create
 an pull request!
+## TODO
+
+- [ ] Add categories to cards
+  - [ ] Card selection separated by categories with `<optgroup>` HTML element
 
 ## License
 
