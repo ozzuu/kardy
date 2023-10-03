@@ -30,13 +30,13 @@ body {
   flex-wrap: wrap;
   justify-content: center;
 }
-#ROOT .main .menu .addCard, #ROOT .main .menu .newAction .discard, #ROOT .main .menu .newAction .probability, #ROOT .main .actions .addCard, #ROOT .main .actions .newAction .discard, #ROOT .main .actions .newAction .probability, #ROOT .main .newAction .addCard, #ROOT .main .newAction .newAction .discard, #ROOT .main .newAction .newAction .probability {
+#ROOT .main .menu .addCard, #ROOT .main .menu .newAction .discard, #ROOT .main .menu .newAction .bet, #ROOT .main .actions .addCard, #ROOT .main .actions .newAction .discard, #ROOT .main .actions .newAction .bet, #ROOT .main .newAction .addCard, #ROOT .main .newAction .newAction .discard, #ROOT .main .newAction .newAction .bet {
   margin: 1em;
   padding: 1em;
   display: flex;
   flex-direction: column;
 }
-#ROOT .main .menu .addCard > *, #ROOT .main .menu .newAction .discard > *, #ROOT .main .menu .newAction .probability > *, #ROOT .main .actions .addCard > *, #ROOT .main .actions .newAction .discard > *, #ROOT .main .actions .newAction .probability > *, #ROOT .main .newAction .addCard > *, #ROOT .main .newAction .newAction .discard > *, #ROOT .main .newAction .newAction .probability > * {
+#ROOT .main .menu .addCard > *, #ROOT .main .menu .newAction .discard > *, #ROOT .main .menu .newAction .bet > *, #ROOT .main .actions .addCard > *, #ROOT .main .actions .newAction .discard > *, #ROOT .main .actions .newAction .bet > *, #ROOT .main .newAction .addCard > *, #ROOT .main .newAction .newAction .discard > *, #ROOT .main .newAction .newAction .bet > * {
   margin: 0.5em 0;
   padding: 0.3em;
 }
@@ -52,7 +52,7 @@ body {
 #ROOT .main .card {
   overflow: hidden;
 }
-#ROOT .main .card:hover .probabilities {
+#ROOT .main .card:hover .bets {
   transform: translateX(0%);
 }
 #ROOT .main .card .name {
@@ -61,16 +61,16 @@ body {
 #ROOT .main .card .description {
   margin: 1em;
 }
-#ROOT .main .card .totalProbability {
+#ROOT .main .card .probability {
   background: rgba(0, 0, 0, 0.062745098);
   border-radius: 1em;
   width: fit-content;
   padding: 0.5em;
 }
-#ROOT .main .card .totalProbability .title {
+#ROOT .main .card .probability .title {
   font-size: 1.1em;
 }
-#ROOT .main .card .probabilities {
+#ROOT .main .card .bets {
   transition: 0.5s;
   transform: translateX(101%);
   display: flex;
@@ -84,10 +84,10 @@ body {
   width: 100%;
   height: 100%;
 }
-#ROOT .main .card .probabilities .title {
+#ROOT .main .card .bets .title {
   font-size: 1.1em;
 }
-#ROOT .main .card .probabilities .probability {
+#ROOT .main .card .bets .probability {
   font-size: 0.8em;
 }
 #ROOT .settings {
