@@ -3,23 +3,26 @@ include pkg/karax/prelude
 import kardy/config
 import kardy/base
 import kardy/storage
-import kardy/models/settings as settingsPage
-import kardy/models/main as mainPage
+import kardy/pages/settings as settingsPage
+import kardy/pages/main as mainPage
+
+import json
 
 var
-  settings = new Settings
-  state = new State
+  settings = getSettings new Settings
+  state = getState new State
+
+# echo pretty %*settings
 
 proc renderer: VNode =
   var hash = getHash()
-  settings = getSettings settings
   if not settings.configured:
-    hash = settingsRoute
-    setHash hash
+    settings = getSettings settings
+    if not settings.configured:
+      hash = settingsRoute
+      setHash hash
 
-  state = getState state
-
-  echo state[]
+  # echo pretty %*state
 
   buildHtml tdiv:
     case hash:

@@ -61,7 +61,6 @@ proc drawSettings*(settings: Settings): VNode =
         text "Done"
         proc onClick(ev: Event; n: VNode) =
           for card in settings.cards:
-            echo card[]
             if card.name.len < 1 or card.quantity < 1:
               return
           settings.configured = true

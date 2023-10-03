@@ -69,3 +69,25 @@ func summary*(probs: seq[Probability]): Probability =
     sum += prob
   if probs.len > 0:
     result = sum / float probs.len
+
+func `==`*(a, b: Action): bool =
+  block itsSame:
+    if a.kind != b.kind:
+      break itsSame
+    if a.kind == NewProbability:
+      break itsSame
+    return true
+  result = false
+
+func addAction*(state; action: Action) =
+  block addAction:
+    for act in state.actions:
+      if act == action:
+        break addAction
+    state.actions.add action
+
+func count*(deck: seq[CardId]; card: CardId): int =
+  ## Count how much of the card in the deck
+  for id in deck:
+    if card == id:
+      inc result

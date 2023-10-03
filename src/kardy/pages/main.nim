@@ -1,88 +1,77 @@
+from std/dom import value, reload, window
+from std/sugar import collect
+
 include pkg/karax/prelude
 
 import kardy/base
 import kardy/config
 import kardy/storage
+import kardy/widgets
 
 from pkg/util/forStr import tryParseInt, tryParseFloat
 
+func cardIdValue(select: VNode): CardId =
+  CardId tryParseInt $select.value
 
 proc addCardForm(settings: Settings; state: State): VNode =
-  var selected = CardId -1
+  let cardSelection = newCardSelect collect(
+      for card in settings.cards:
+        if not card.discarded state:
+          if state.deck.count(card.id) < card.quantity:
+            card
+  )
   buildHtml tdiv(class = "addCard"):
     text "Add Card to Deck"
-    select:
-      option(selected = "", disabled = ""): text "Select the Card"
-      for i in 0..<settings.cards.len:
-        let card = settings.cards[i]
-        if not card.discarded state:
-          option(index = i):
-            text card.name
-            proc onClick(ev: Event; n: VNode) =
-              selected = settings.cards[n.index].id
+    cardSelection
     button:
       text "Add Card"
       proc onClick(ev: Event; n: VNode) =
+        let selected = cardSelection.cardIdValue
         if selected >= 0:
           let maxCards = settings.cards.get(selected).quantity
-          var inDeck = 0
-          for id in state.deck:
-            if selected == id:
-              inc inDeck
-          if inDeck < maxCards:
+          if state.deck.count(selected) < maxCards:
             state.deck.add selected
+            unselect cardSelection
             saveState state
+            redrawSync()
 
 proc addActionForm(settings: Settings; state: State): VNode =
   var
-    # Discard
-    discardCardId = CardId -1
-    # Add probability
-    probabilityCardId = CardId -1
     probability: Probability
+  let
+    cards = collect:
+      for card in settings.cards:
+        if card.disposable and not card.discarded state:
+          card
+    discardCardSel = newCardSelect cards
+    addProbabCardSel = newCardSelect cards
   buildHtml tdiv(class = "newAction"):
     tdiv(class = "discard"):
       text "Discard Card"
-      select:
-        option(selected = "", disabled = ""): text "Select the Card"
-        for i in 0..<settings.cards.len:
-          let card = settings.cards[i]
-          if card.disposable and not card.discarded state:
-            option(index = card.id):
-              text card.name
-              proc onClick(ev: Event; n: VNode) =
-                discardCardId = CardId n.index
+      discardCardSel
       button:
         text "Discard"
         proc onClick(ev: Event; n: VNode) =
-          if discardCardId >= 0:
-            state.actions.add discardCardId.newAction Discard
-            echo discardCardId
+          let cardId = discardCardSel.cardIdValue
+          if cardId >= 0:
+            state.addAction cardId.newAction Discard
             for i in countdown(state.deck.len - 1, 0):
-              if discardCardId == state.deck[i]:
+              if cardId == state.deck[i]:
                 state.deck.delete i
             saveState state
     tdiv(class = "probability"):
       text "Add a new probability to card"
-      select:
-        option(selected = "", disabled = ""): text "Select the Card"
-        for i in 0..<settings.cards.len:
-          let card = settings.cards[i]
-          if card.disposable and not card.discarded state:
-            option(index = card.id):
-              text card.name
-              proc onClick(ev: Event; n: VNode) =
-                probabilityCardId = CardId n.index
+      addProbabCardSel
       input(`type` = "number", step = "0.1", max = $high Probability,
             min = $low Probability, value = "0"):
         proc onInput(ev: Event; n: VNode) =
           probability = tryParseFloat $n.value
-
       button:
         text "Add"
         proc onClick(ev: Event; n: VNode) =
-          if probabilityCardId >= 0:
-            state.actions.add probabilityCardId.newAction(NewProbability, probability)
+          let cardId = addProbabCardSel.cardIdValue
+          if cardId >= 0:
+            state.addAction cardId.newAction(NewProbability, probability)
             saveState state
 
 proc drawMain*(settings: Settings; state: State): VNode =
@@ -155,3 +144,4 @@ proc drawMain*(settings: Settings; state: State): VNode =
       text "Reset state"
       proc onClick(ev: Event; n: VNode) =
         saveState new State
+        reload window.location

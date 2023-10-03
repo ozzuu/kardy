@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.3.0 (2023/10/03)
+
+- Skip duplicated actions
+- Fixed chromium support
+- Centered elements
+
 ## Version 0.2.0 (2023/10/01)
 
 - Added discardable, disposable and description to card setting
