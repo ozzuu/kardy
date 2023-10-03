@@ -55,9 +55,7 @@ proc addActionForm(settings: Settings; state: State): VNode =
           let cardId = discardCardSel.cardIdValue
           if cardId >= 0:
             state.addAction cardId.newAction Discard
-            for i in countdown(state.deck.len - 1, 0):
-              if cardId == state.deck[i]:
-                state.deck.delete i
+            unselect discardCardSel
             saveState state
     tdiv(class = "probability"):
       text "Add a new probability to card"
@@ -72,16 +70,29 @@ proc addActionForm(settings: Settings; state: State): VNode =
           let cardId = addProbabCardSel.cardIdValue
           if cardId >= 0:
             state.addAction cardId.newAction(NewProbability, probability)
+            unselect addProbabCardSel
             saveState state
+
+proc undoForm(settings: Settings; state: State): VNode =
+  buildHtml tdiv(class = "undo"):
+    if state.actions.len > 0:
+      button:
+        text "Undo last action"
+        proc onClick(ev: Event; n: VNode) =
+          discard pop state.actions
+          saveState state
+
+
 
 proc drawMain*(settings: Settings; state: State): VNode =
   buildHtml tdiv(class = "main"):
     h1: text "Kardy"
 
-    tdiv(class = "actions"):
+    tdiv(class = "menu"):
       addCardForm settings, state
-      br()
-      addActionForm settings, state
+      tdiv(class = "actions"):
+        addActionForm settings, state
+        undoForm settings, state
 
     tdiv(class = "deck"):
       tdiv(class = "title"): text "Deck"
@@ -90,28 +101,29 @@ proc drawMain*(settings: Settings; state: State): VNode =
           let
             cardId = state.deck[i]
             card = settings.cards.get cardId
-            probabilities = card.probabilities state
-
-          tdiv(class = "card"):
-            span(class = "name"):
-              text card.name
-            p(class = "description"):
-              text card.description
-            tdiv(class = "probabilities"):
-              tdiv(class = "title"): text "Probabilities"
-              if probabilities.len > 0:
-                for probability in probabilities:
-                  tdiv(class = "probability"):
-                    text $probability
-            tdiv(class = "totalProbability"):
-              if probabilities.len > 0:
-                tdiv(class = "title"): text "Probability"
-                bold: text $probabilities.summary
-            button(class = "delete", index = i):
-              text "Delete"
-              proc onClick(ev: Event; n: VNode) =
-                state.deck.delete n.index
-                saveState state
+          if not card.discarded state:
+            let probabilities = card.probabilities state
+            
+            tdiv(class = "card"):
+              span(class = "name"):
+                text card.name
+              p(class = "description"):
+                text card.description
+              tdiv(class = "probabilities"):
+                tdiv(class = "title"): text "Probabilities"
+                if probabilities.len > 0:
+                  for probability in probabilities:
+                    tdiv(class = "probability"):
+                      text $probability
+              tdiv(class = "totalProbability"):
+                if probabilities.len > 0:
+                  tdiv(class = "title"): text "Probability"
+                  bold: text $probabilities.summary
+              button(class = "delete", index = i):
+                text "Delete"
+                proc onClick(ev: Event; n: VNode) =
+                  state.deck.delete n.index
+                  saveState state
 
     tdiv(class = "gameCards"):
       tdiv(class = "title"): text "Game cards"
