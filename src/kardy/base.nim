@@ -76,13 +76,15 @@ func `==`*(a, b: Action): bool =
       break itsSame
     if a.kind == NewProbability:
       break itsSame
-    return true
+    if a.cardId == b.cardId:
+      return true
   result = false
 
 func addAction*(state; action: Action) =
   block addAction:
     for act in state.actions:
       if act == action:
+        debugecho "cancel" & $action[]
         break addAction
     state.actions.add action
 

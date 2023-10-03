@@ -8,58 +8,52 @@ import kardy/config
 import kardy/storage
 import kardy/widgets
 
-from pkg/util/forStr import tryParseInt, tryParseFloat
-
-func cardIdValue(select: VNode): CardId =
-  CardId tryParseInt $select.value
+from pkg/util/forStr import tryParseFloat
 
 proc addCardForm(settings: Settings; state: State): VNode =
-  let cardSelection = newCardSelect collect(
+  var selectedCard {.global.} = CardId -1
+  buildHtml tdiv(class = "addCard"):
+    text "Add Card to Deck"
+    selectedCard.newCardSelect collect(
       for card in settings.cards:
         if not card.discarded state:
           if state.deck.count(card.id) < card.quantity:
             card
-  )
-  buildHtml tdiv(class = "addCard"):
-    text "Add Card to Deck"
-    cardSelection
+    )
     button:
       text "Add Card"
       proc onClick(ev: Event; n: VNode) =
-        let selected = cardSelection.cardIdValue
-        if selected >= 0:
-          let maxCards = settings.cards.get(selected).quantity
-          if state.deck.count(selected) < maxCards:
-            state.deck.add selected
-            unselect cardSelection
+        let cardId = selectedCard
+        echo cardId
+        if cardId >= 0:
+          let maxCards = settings.cards.get(cardId).quantity
+          if state.deck.count(cardId) < maxCards:
+            state.deck.add cardId
             saveState state
-            redrawSync()
 
 proc addActionForm(settings: Settings; state: State): VNode =
+  var probability: Probability
+  let cards {.global.} = collect:
+    for card in settings.cards:
+      if card.disposable and not card.discarded state:
+        card
   var
-    probability: Probability
-  let
-    cards = collect:
-      for card in settings.cards:
-        if card.disposable and not card.discarded state:
-          card
-    discardCardSel = newCardSelect cards
-    addProbabCardSel = newCardSelect cards
+    discardCard {.global.} = CardId -1
+    addProbabilityCard {.global.} = CardId -1
   buildHtml tdiv(class = "newAction"):
     tdiv(class = "discard"):
       text "Discard Card"
-      discardCardSel
+      discardCard.newCardSelect cards
       button:
         text "Discard"
         proc onClick(ev: Event; n: VNode) =
-          let cardId = discardCardSel.cardIdValue
+          let cardId = discardCard
           if cardId >= 0:
             state.addAction cardId.newAction Discard
-            unselect discardCardSel
             saveState state
     tdiv(class = "probability"):
       text "Add a new probability to card"
-      addProbabCardSel
+      addProbabilityCard.newCardSelect cards
       input(`type` = "number", step = "0.1", max = $high Probability,
             min = $low Probability, value = "0"):
         proc onInput(ev: Event; n: VNode) =
@@ -67,17 +61,25 @@ proc addActionForm(settings: Settings; state: State): VNode =
       button:
         text "Add"
         proc onClick(ev: Event; n: VNode) =
-          let cardId = addProbabCardSel.cardIdValue
+          let cardId = addProbabilityCard
+          echo cardId
           if cardId >= 0:
             state.addAction cardId.newAction(NewProbability, probability)
-            unselect addProbabCardSel
             saveState state
 
 proc undoForm(settings: Settings; state: State): VNode =
   buildHtml tdiv(class = "undo"):
     if state.actions.len > 0:
+      p:
+        text "Last action:"
+        p:
+          bold:
+            text $state.actions[^1].kind
+            text " for card "
+            text settings.cards.get(state.actions[^1].cardId).name
+
       button:
-        text "Undo last action"
+        text "Undo"
         proc onClick(ev: Event; n: VNode) =
           discard pop state.actions
           saveState state
@@ -103,7 +105,7 @@ proc drawMain*(settings: Settings; state: State): VNode =
             card = settings.cards.get cardId
           if not card.discarded state:
             let probabilities = card.probabilities state
-            
+
             tdiv(class = "card"):
               span(class = "name"):
                 text card.name

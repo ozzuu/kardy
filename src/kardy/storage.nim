@@ -26,6 +26,7 @@ proc getSettings*(default: Settings): Settings =
     result = default
 
 proc saveState*(s: State) =
+  echo $s.toJson
   window.localStorage.setItem(localStorageStateKey, $s.toJson)
 proc getState*(default: State): State =
   try:

@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.4.0 (2023/10/03)
+
+- Deleted `unselect` proc for `<select>` elements
+- Fixed action comparison
+- Fixed selects again
+- Added last action description to undo
+
 ## Version 0.3.0 (2023/10/03)
 
 - Skip duplicated actions

@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.3.0"
+version       = "0.4.0"
 author        = "Thiago Navarro"
 description   = "Cards Games Strategist"
 license       = "GPL-3.0-only"
