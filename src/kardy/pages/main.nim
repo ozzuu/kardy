@@ -35,7 +35,7 @@ proc addCardForm(settings: Settings; state: State): VNode =
 proc addActionForm(settings: Settings; state: State): VNode =
   var
     betPlayer: int
-    betTrustability: Percentage
+    betTrustability: Percentage = 1
   var
     discardCard {.global.} = CardId -1
     addBetCard {.global.} = CardId -1
