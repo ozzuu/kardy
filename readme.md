@@ -1,6 +1,6 @@
 <div align=center>
 
-# Kardist
+# Kard
 
 #### Cards Games Strategist
 
